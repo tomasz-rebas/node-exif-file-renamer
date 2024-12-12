@@ -1,7 +1,7 @@
 import { join } from "path";
 import { readdir } from "fs/promises";
 
-export const countFiles = async (directory: string): Promise<number> => {
+export const getFileCount = async (directory: string): Promise<number> => {
   let fileCount = 0;
 
   try {
@@ -11,7 +11,7 @@ export const countFiles = async (directory: string): Promise<number> => {
       const entryPath = join(directory, entry.name);
 
       if (entry.isDirectory()) {
-        fileCount += await countFiles(entryPath);
+        fileCount += await getFileCount(entryPath);
       } else if (entry.isFile()) {
         fileCount++;
       }
@@ -23,4 +23,8 @@ export const countFiles = async (directory: string): Promise<number> => {
   }
 
   return fileCount;
+};
+
+export const renameFiles = () => {
+  console.log("Renaming...");
 };
