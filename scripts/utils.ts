@@ -1,13 +1,27 @@
+import { join } from "path";
+
 import { readdir } from "fs/promises";
 
 export const countFiles = async (directory: string): Promise<number> => {
-  try {
-    const { length: fileCount } = await readdir(directory);
+  let fileCount = 0;
 
-    return fileCount;
+  try {
+    const entries = await readdir(directory, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        fileCount += await countFiles(fullPath);
+      } else if (entry.isFile()) {
+        fileCount++;
+      }
+    }
   } catch (error) {
     console.error("Error occured when trying to count files:", error);
 
     return 0;
   }
+
+  return fileCount;
 };
