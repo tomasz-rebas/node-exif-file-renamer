@@ -6,22 +6,13 @@ export const getMetadata = async (
   try {
     const metadata: EXIFTags = await exiftool.read(filePath);
 
-    const {
-      DateTimeOriginal,
-      FNumber,
-      FocalLength,
-      SubSecTimeOriginal,
-      ExposureTime,
-      ISO,
-    } = metadata;
-
     return {
-      DateTimeOriginal,
-      FNumber,
-      FocalLength,
-      SubSecTimeOriginal,
-      ExposureTime,
-      ISO,
+      DateTimeOriginal: metadata.DateTimeOriginal,
+      FNumber: metadata.FNumber,
+      FocalLength: metadata.FocalLength,
+      SubSecTimeOriginal: metadata.SubSecTimeOriginal,
+      ExposureTime: metadata.ExposureTime,
+      ISO: metadata.ISO,
     };
   } catch (error) {
     console.error("Error while extracting metadata:", error);
