@@ -1,33 +1,10 @@
-const { exiftool } = require("exiftool-vendored");
+import { EXIFTags, exiftool } from "exiftool-vendored";
 
-interface DateTimeOriginal {
-  year: number;
-  month: number;
-  day: number;
-  hour: number;
-  minute: number;
-  second: number;
-  [key: string]: any;
-}
-
-interface SelectedMetadata {
-  DateTimeOriginal: DateTimeOriginal;
-  FNumber: number;
-  FocalLength: string;
-  SubSecTimeOriginal: number;
-  ExposureTime: string;
-  ISO: number;
-}
-
-interface AllMetadata extends SelectedMetadata {
-  [key: string]: any;
-}
-
-const getMetadata = async (
+export const getMetadata = async (
   filePath: string
-): Promise<SelectedMetadata | undefined> => {
+): Promise<EXIFTags | undefined> => {
   try {
-    const metadata: AllMetadata = await exiftool.read(filePath);
+    const metadata: EXIFTags = await exiftool.read(filePath);
 
     const {
       DateTimeOriginal,
@@ -47,8 +24,6 @@ const getMetadata = async (
       ISO,
     };
   } catch (error) {
-    console.error("Error while extracting metadata.", error);
+    console.error("Error while extracting metadata:", error);
   }
 };
-
-module.exports = { getMetadata };

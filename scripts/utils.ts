@@ -1,8 +1,8 @@
-const fs = require("fs/promises");
+import { readdir } from "fs/promises";
 
-const countFiles = async (directory: string): Promise<number> => {
+export const countFiles = async (directory: string): Promise<number> => {
   try {
-    const { length: fileCount } = await fs.readdir(directory);
+    const { length: fileCount } = await readdir(directory);
 
     return fileCount;
   } catch (error) {
@@ -11,5 +11,3 @@ const countFiles = async (directory: string): Promise<number> => {
     return 0;
   }
 };
-
-module.exports = { countFiles };
