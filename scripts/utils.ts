@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join, extname } from "path";
 import { readdir } from "fs/promises";
 
 export const getFileCount = async (directory: string): Promise<number> => {
@@ -8,9 +8,8 @@ export const getFileCount = async (directory: string): Promise<number> => {
     const entries = await readdir(directory, { withFileTypes: true });
 
     for (const entry of entries) {
-      const entryPath = join(directory, entry.name);
-
       if (entry.isDirectory()) {
+        const entryPath = join(directory, entry.name);
         fileCount += await getFileCount(entryPath);
       } else if (entry.isFile()) {
         fileCount++;
@@ -25,6 +24,22 @@ export const getFileCount = async (directory: string): Promise<number> => {
   return fileCount;
 };
 
-export const renameFiles = () => {
-  console.log("Renaming...");
+export const isJpgOrNef = (fileName: string): boolean =>
+  [".nef", ".jpg"].includes(extname(fileName).toLowerCase());
+
+export const renameFiles = async (directory: string) => {
+  const entries = await readdir(directory, { withFileTypes: true });
+
+  /**
+   * TODO: Track renaming progress
+   */
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const entryPath = join(directory, entry.name);
+      await renameFiles(entryPath);
+    } else if (entry.isFile() && isJpgOrNef(entry.name)) {
+      console.log(entry.name, "- skipping");
+    }
+  }
 };

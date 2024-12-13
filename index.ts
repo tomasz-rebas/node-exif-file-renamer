@@ -14,7 +14,8 @@ const promptToStartRenaming = (): void => {
 
   rl.question(`Shall we? [y/n] `, (answer) => {
     if (answer === "yes" || answer === "y") {
-      renameFiles();
+      console.log("Scanning...");
+      renameFiles(testDirectoryPath);
       rl.close();
 
       return;
