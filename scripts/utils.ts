@@ -1,5 +1,6 @@
 import { join, extname } from "path";
 import { readdir } from "fs/promises";
+import { getMetadata, Metadata } from "./exifReader";
 
 export const getFileCount = async (directory: string): Promise<number> => {
   let fileCount = 0;
@@ -24,8 +25,18 @@ export const getFileCount = async (directory: string): Promise<number> => {
   return fileCount;
 };
 
-export const isJpgOrNef = (fileName: string): boolean =>
+const isJpgOrNef = (fileName: string): boolean =>
   [".nef", ".jpg"].includes(extname(fileName).toLowerCase());
+
+const getNewFilename = (metadata: Metadata): string => {
+  /**
+   * TODO: Build the new name
+   */
+
+  console.log(metadata);
+
+  return "";
+};
 
 export const renameFiles = async (directory: string) => {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -35,11 +46,25 @@ export const renameFiles = async (directory: string) => {
    */
 
   for (const entry of entries) {
+    const entryPath = join(directory, entry.name);
+
     if (entry.isDirectory()) {
-      const entryPath = join(directory, entry.name);
       await renameFiles(entryPath);
-    } else if (entry.isFile() && isJpgOrNef(entry.name)) {
-      console.log(entry.name, "- skipping");
+      continue;
+    }
+
+    if (entry.isFile() && isJpgOrNef(entry.name)) {
+      const metadata = await getMetadata(entryPath);
+
+      if (metadata === undefined) {
+        console.error(
+          "Couldn't retrieve metadata for the given file. Skipping."
+        );
+
+        continue;
+      }
+
+      const newFilename = getNewFilename(metadata);
     }
   }
 };

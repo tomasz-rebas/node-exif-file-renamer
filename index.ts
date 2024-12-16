@@ -1,6 +1,5 @@
 import { join } from "path";
 import readline from "readline";
-import { getMetadata } from "./scripts/exifReader";
 import { getFileCount, renameFiles } from "./scripts/utils";
 
 const testFilePath = join(__dirname, "test_images", "1.nef");
@@ -28,9 +27,6 @@ const promptToStartRenaming = (): void => {
 
 const main = async (): Promise<void> => {
   try {
-    const metadata = await getMetadata(testFilePath);
-    console.log("selectedMetadata", metadata);
-
     const fileCount = await getFileCount(testDirectoryPath);
 
     if (fileCount > 0) {
