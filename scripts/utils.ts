@@ -28,14 +28,23 @@ export const getFileCount = async (directory: string): Promise<number> => {
 const isJpgOrNef = (fileName: string): boolean =>
   [".nef", ".jpg"].includes(extname(fileName).toLowerCase());
 
+// Ensure the number is always 2-digit e.g. 02 instead of 2
+const padded = (time: number) => time.toString().padStart(2, "0");
+
 const getNewFilename = (metadata: Metadata): string => {
-  /**
-   * TODO: Build the new name
-   */
+  const { dateTime, fNumber, focalLength, exposure, iso } = metadata;
+  const { year, month, day, hour, minute, second, subSecond } = dateTime;
 
-  console.log(metadata);
+  let segments: string[] = [
+    year.toString().slice(2) + padded(month) + padded(day),
+    padded(hour) + padded(minute) + padded(second) + padded(subSecond),
+    `${focalLength.split(".")[0]}mm`,
+    `${exposure.replace(/\//g, "-")}s`,
+    `f${fNumber}`,
+    `ISO-${iso}`,
+  ];
 
-  return "";
+  return segments.join("_");
 };
 
 export const renameFiles = async (directory: string) => {
@@ -65,6 +74,10 @@ export const renameFiles = async (directory: string) => {
       }
 
       const newFilename = getNewFilename(metadata);
+
+      console.log("-----------------------------------");
+      console.log("current name\n", entry.name);
+      console.log("new name\n", newFilename);
     }
   }
 };
