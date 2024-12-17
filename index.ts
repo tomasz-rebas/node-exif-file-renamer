@@ -1,8 +1,7 @@
 import { join } from "path";
 import readline from "readline";
-import { getFileCount, renameFiles } from "./scripts/utils";
+import { getFileCount, renameFiles } from "./scripts/helpers";
 
-const testFilePath = join(__dirname, "test_images", "1.nef");
 const testDirectoryPath = join(__dirname, "test_directory");
 
 const promptToStartRenaming = (): void => {
