@@ -1,26 +1,27 @@
 import { join } from "path";
-import readline from "readline";
+import { createInterface } from "readline";
 import { getFileCount, renameFiles } from "./scripts/helpers";
 
 const testDirectoryPath = join(__dirname, "test_directory");
 
-const promptToStartRenaming = (): void => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+const askQuestion = (question: string, validAnswers: string[]) => {
+  return new Promise((resolve) => {
+    const rl = createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
 
-  rl.question(`Shall we? [y/n] `, (answer) => {
-    if (answer === "yes" || answer === "y") {
-      console.log("Scanning...");
-      renameFiles(testDirectoryPath);
-      rl.close();
+    rl.question(question, (answer) => {
+      const normalizedAnswer = answer.trim().toLowerCase();
 
-      return;
-    }
-
-    rl.close();
-    promptToStartRenaming();
+      if (validAnswers.includes(normalizedAnswer)) {
+        rl.close();
+        resolve(normalizedAnswer);
+      } else {
+        rl.close();
+        resolve(askQuestion(question, validAnswers));
+      }
+    });
   });
 };
 
@@ -33,7 +34,16 @@ const main = async (): Promise<void> => {
         `The program is going to iterate through ${fileCount} files.`
       );
 
-      promptToStartRenaming();
+      const validAnswers = ["y", "yes", "n", "no"];
+      const answer = await askQuestion("Shall we? [y/n] ", validAnswers);
+
+      if (answer === "yes" || answer === "y") {
+        console.log("Scanning...");
+        await renameFiles(testDirectoryPath);
+        console.log("Scanned all the files. Exit the program.");
+      }
+
+      process.exit(0);
     }
   } catch (error) {
     console.error(
