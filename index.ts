@@ -3,7 +3,7 @@ import { createInterface } from "readline";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
 
-const testDirectoryPath = join(__dirname, "test_directory");
+const testDirectoryPath = join(__dirname, "test_directory_2");
 
 const askQuestion = (question: string, validAnswers: string[]) => {
   return new Promise((resolve) => {

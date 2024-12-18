@@ -56,7 +56,7 @@ export const getMetadata = async (
       },
       fNumber: metadata.FNumber,
       focalLength: metadata.FocalLength,
-      exposure: metadata.ExposureTime,
+      exposure: metadata.ExposureTime.toString(),
       iso: metadata.ISO,
     };
   } catch (error) {
