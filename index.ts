@@ -1,6 +1,7 @@
 import { join } from "path";
 import { createInterface } from "readline";
-import { getFileCount, renameFiles } from "./scripts/helpers";
+import { renameAllFiles } from "./scripts/renameAllFiles";
+import { getFileCount } from "./scripts/getFileCount";
 
 const testDirectoryPath = join(__dirname, "test_directory");
 
@@ -39,7 +40,7 @@ const main = async (): Promise<void> => {
 
       if (answer === "yes" || answer === "y") {
         console.log("Scanning...");
-        await renameFiles(testDirectoryPath);
+        await renameAllFiles(testDirectoryPath);
         console.log("Scanned all the files. Exit the program.");
       }
 
