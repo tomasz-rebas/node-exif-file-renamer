@@ -16,12 +16,12 @@ const askQuestion = (question: string, validAnswers: string[]) => {
       const normalizedAnswer = answer.trim().toLowerCase();
 
       if (validAnswers.includes(normalizedAnswer)) {
+        rl.close();
         resolve(normalizedAnswer);
       } else {
+        rl.close();
         resolve(askQuestion(question, validAnswers));
       }
-
-      rl.close();
     });
   });
 };
