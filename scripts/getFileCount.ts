@@ -17,8 +17,7 @@ export const getFileCount = async (directory: string): Promise<number> => {
     }
   } catch (error) {
     console.error("Error occured when trying to count files:", error);
-
-    return 0;
+    process.exit(0);
   }
 
   return fileCount;

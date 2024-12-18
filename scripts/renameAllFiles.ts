@@ -16,12 +16,14 @@ const renameFile = async (oldPath: string, newPath: string): Promise<void> => {
   }
 };
 
-const processFile = async (entry: Dirent) => {
+type ProcessedFile = "JPG" | "RAW" | "SKIPPED";
+
+const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
   const { parentPath, name } = entry;
   const path = join(parentPath, name);
 
   if (!isJpgOrNef(name)) {
-    return;
+    return "SKIPPED";
   }
 
   const metadata = await getMetadata(path);
@@ -29,39 +31,64 @@ const processFile = async (entry: Dirent) => {
   if (metadata === undefined) {
     console.error(`Couldn't retrieve metadata for ${name}`);
 
-    return;
+    return "SKIPPED";
   }
 
   const newFilename = getNewFilename(metadata, extname(path));
 
-  console.log("-----------------------------------");
-  console.log("current name\n", name);
-  console.log("new name\n", newFilename);
-
   if (name !== newFilename) {
     await renameFile(path, join(parentPath, newFilename));
-  } else {
-    console.log("These files have the same name. Skipping.");
+
+    return "RAW";
   }
+
+  return "SKIPPED";
 };
 
-export const renameAllFiles = async (directory: string) => {
+interface FileCountByType {
+  raw: number;
+  jpg: number;
+  skipped: number;
+}
+
+export const renameAllFiles = async (
+  directory: string
+): Promise<FileCountByType> => {
   const entries = await readdir(directory, { withFileTypes: true });
 
-  /**
-   * TODO: Track renaming progress
-   */
+  let rawFilesRenamed = 0;
+  let jpgFilesRenamed = 0;
+  let filesSkipped = 0;
 
   for (const entry of entries) {
-    const entryPath = join(directory, entry.name);
-
     if (entry.isDirectory()) {
-      await renameAllFiles(entryPath);
+      const entryPath = join(directory, entry.name);
+      const fileCountByType = await renameAllFiles(entryPath);
+
+      rawFilesRenamed += fileCountByType.raw;
+      jpgFilesRenamed += fileCountByType.jpg;
+      filesSkipped += fileCountByType.skipped;
+
       continue;
     }
 
     if (entry.isFile()) {
-      await processFile(entry);
+      const processedFile = await processFile(entry);
+
+      switch (processedFile) {
+        case "RAW":
+          rawFilesRenamed++;
+        case "JPG":
+          jpgFilesRenamed++;
+        default:
+          filesSkipped++;
+      }
     }
   }
+
+  return {
+    raw: rawFilesRenamed,
+    jpg: jpgFilesRenamed,
+    skipped: filesSkipped,
+  };
 };

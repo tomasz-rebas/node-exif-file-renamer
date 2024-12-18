@@ -40,12 +40,22 @@ const main = async (): Promise<void> => {
 
       if (answer === "yes" || answer === "y") {
         console.log("Scanning...");
-        await renameAllFiles(testDirectoryPath);
-        console.log("Scanned all the files. Exit the program.");
-      }
 
-      process.exit(0);
+        const fileCountByType = await renameAllFiles(testDirectoryPath);
+        const { raw, jpg, skipped } = fileCountByType;
+
+        console.log(`Scanned ${raw + jpg + skipped} files in total.`);
+        console.log("RAW files renamed: ", raw);
+        console.log("JPG files renamed: ", jpg);
+        console.log("Files skipped: ", skipped);
+      }
+    } else {
+      console.log(
+        "There's no files in the given directory. Exiting the program."
+      );
     }
+
+    process.exit(0);
   } catch (error) {
     console.error(
       "Error occured when running the main segment of the applcation: ",
