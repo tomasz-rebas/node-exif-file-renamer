@@ -60,6 +60,10 @@ export const getMetadata = async (
       iso: metadata.ISO,
     };
   } catch (error) {
-    console.error("Error while extracting metadata:", error);
+    if (error instanceof Error) {
+      console.error("Error while extracting metadata.", error.message);
+    } else {
+      console.error("An unknown error occurred.");
+    }
   }
 };
