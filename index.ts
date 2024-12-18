@@ -58,7 +58,7 @@ const main = async (): Promise<void> => {
     process.exit(0);
   } catch (error) {
     console.error(
-      "Error occured when running the main segment of the applcation: ",
+      "Error occured when running the main segment of the application: ",
       error
     );
   }
