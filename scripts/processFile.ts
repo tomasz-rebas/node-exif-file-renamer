@@ -4,8 +4,11 @@ import { getMetadata } from "./getMetadata";
 import { getNewFilename } from "./getNewFilename";
 import { Dirent } from "fs";
 
-const isJpgOrNef = (fileName: string): boolean =>
-  [".nef", ".jpg"].includes(extname(fileName).toLowerCase());
+const isJpg = (fileName: string): boolean =>
+  extname(fileName).toLowerCase() === ".jpg";
+
+const isRaw = (fileName: string): boolean =>
+  extname(fileName).toLowerCase() === ".nef";
 
 const renameFile = async (oldPath: string, newPath: string): Promise<void> => {
   try {
@@ -22,7 +25,9 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
   const { parentPath, name } = entry;
   const path = join(parentPath, name);
 
-  if (!isJpgOrNef(name)) {
+  const isJpgOrRaw = isJpg(name) || isRaw(name);
+
+  if (!isJpgOrRaw) {
     return "SKIPPED";
   }
 
@@ -36,11 +41,15 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
 
   const newFilename = getNewFilename(metadata, extname(path));
 
-  if (name !== newFilename) {
-    await renameFile(path, join(parentPath, newFilename));
+  if (name === newFilename) {
+    return "SKIPPED";
+  }
 
+  await renameFile(path, join(parentPath, newFilename));
+
+  if (isRaw(name)) {
     return "RAW";
   }
 
-  return "SKIPPED";
+  return "JPG";
 };
