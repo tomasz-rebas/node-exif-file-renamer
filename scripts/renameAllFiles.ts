@@ -35,10 +35,13 @@ export const renameAllFiles = async (
       switch (processedFile) {
         case "RAW":
           rawFilesRenamed++;
+          break;
         case "JPG":
           jpgFilesRenamed++;
+          break;
         default:
           filesSkipped++;
+          break;
       }
     }
   }
