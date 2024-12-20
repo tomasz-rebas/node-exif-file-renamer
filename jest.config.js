@@ -4,4 +4,5 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest", // Handle TypeScript files (both .ts and .tsx)
   },
+  verbose: true,
 };
