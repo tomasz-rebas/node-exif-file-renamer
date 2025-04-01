@@ -3,7 +3,7 @@ import { createInterface } from "readline";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
 
-const testDirectoryPath = join(__dirname, "test_directory");
+const testDirectoryPath = join(__dirname, "test_directory_2");
 
 const askQuestion = (question: string, validAnswers: string[]) => {
   return new Promise((resolve) => {
@@ -58,7 +58,7 @@ const main = async (): Promise<void> => {
     process.exit(0);
   } catch (error) {
     console.error(
-      "Error occured when running the main segment of the applcation: ",
+      "Error occured when running the main segment of the application: ",
       error
     );
   }

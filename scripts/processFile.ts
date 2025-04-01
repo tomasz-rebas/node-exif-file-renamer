@@ -15,7 +15,7 @@ const renameFile = async (oldPath: string, newPath: string): Promise<void> => {
     await rename(oldPath, newPath);
     console.log(`Renamed ${basename(oldPath)} to ${basename(newPath)}`);
   } catch (error) {
-    console.error(`Error occurred when renaming the file ${oldPath}:`, error);
+    console.error(`Error occurred when renaming the file ${oldPath}.`, error);
   }
 };
 
@@ -40,6 +40,10 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
   }
 
   const newFilename = getNewFilename(metadata, extname(path));
+
+  if (!newFilename) {
+    return "SKIPPED";
+  }
 
   if (name === newFilename) {
     return "SKIPPED";

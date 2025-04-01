@@ -56,10 +56,14 @@ export const getMetadata = async (
       },
       fNumber: metadata.FNumber,
       focalLength: metadata.FocalLength,
-      exposure: metadata.ExposureTime,
+      exposure: metadata.ExposureTime.toString(),
       iso: metadata.ISO,
     };
   } catch (error) {
-    console.error("Error while extracting metadata:", error);
+    if (error instanceof Error) {
+      console.error("Error while extracting metadata.", error.message);
+    } else {
+      console.error("An unknown error occurred.");
+    }
   }
 };
