@@ -1,37 +1,20 @@
 import { existsSync, lstatSync } from "fs";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
-import inquirer from "inquirer";
+import { input, confirm } from "@inquirer/prompts";
 
-const chooseDirectory = async (): Promise<string> => {
-  const { directory } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "directory",
-      message: "Enter the directory path:",
-      validate: (input) => {
-        return existsSync(input) && lstatSync(input).isDirectory()
-          ? true
-          : "Please enter a valid directory path.";
-      },
+const chooseDirectory = async (): Promise<string> =>
+  await input({
+    message: "Enter the directory path:",
+    validate: (input) => {
+      return existsSync(input) && lstatSync(input).isDirectory()
+        ? true
+        : "Please enter a valid directory path.";
     },
-  ]);
+  });
 
-  return directory;
-};
-
-const askConfirmation = async (): Promise<string> => {
-  const { confirm } = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "confirm",
-      message: "Shall we?",
-      default: false,
-    },
-  ]);
-
-  return confirm;
-};
+const askConfirmation = async (): Promise<boolean> =>
+  await confirm({ message: "Shall we?", default: false });
 
 const main = async (): Promise<void> => {
   try {
