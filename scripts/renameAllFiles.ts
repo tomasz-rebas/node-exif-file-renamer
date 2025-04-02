@@ -20,11 +20,11 @@ export const renameAllFiles = async (
   for (const entry of entries) {
     if (entry.isDirectory()) {
       const entryPath = join(directory, entry.name);
-      const fileCountByType = await renameAllFiles(entryPath);
+      const { raw, jpg, skipped } = await renameAllFiles(entryPath);
 
-      rawFilesRenamed += fileCountByType.raw;
-      jpgFilesRenamed += fileCountByType.jpg;
-      filesSkipped += fileCountByType.skipped;
+      rawFilesRenamed += raw;
+      jpgFilesRenamed += jpg;
+      filesSkipped += skipped;
 
       continue;
     }
