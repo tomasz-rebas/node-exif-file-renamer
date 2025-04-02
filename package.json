@@ -19,6 +19,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "@inquirer/prompts": "^7.4.0",
     "exiftool-vendored": "^29.0.0"
   }
 }

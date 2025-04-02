@@ -1,47 +1,37 @@
-import { join } from "path";
-import { createInterface } from "readline";
+import { existsSync, lstatSync } from "fs";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
+import { input, confirm } from "@inquirer/prompts";
 
-const testDirectoryPath = join(__dirname, "test_directory_2");
-
-const askQuestion = (question: string, validAnswers: string[]) => {
-  return new Promise((resolve) => {
-    const rl = createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    rl.question(question, (answer) => {
-      const normalizedAnswer = answer.trim().toLowerCase();
-
-      if (validAnswers.includes(normalizedAnswer)) {
-        rl.close();
-        resolve(normalizedAnswer);
-      } else {
-        rl.close();
-        resolve(askQuestion(question, validAnswers));
-      }
-    });
+const chooseDirectory = async (): Promise<string> =>
+  await input({
+    message: "Enter the directory path:",
+    validate: (input) => {
+      return existsSync(input) && lstatSync(input).isDirectory()
+        ? true
+        : "Please enter a valid directory path.";
+    },
   });
-};
+
+const askConfirmation = async (): Promise<boolean> =>
+  await confirm({ message: "Shall we?", default: false });
 
 const main = async (): Promise<void> => {
   try {
-    const fileCount = await getFileCount(testDirectoryPath);
+    const directory = await chooseDirectory();
+    const fileCount = await getFileCount(directory);
 
     if (fileCount > 0) {
       console.log(
         `The program is going to iterate through ${fileCount} files.`
       );
 
-      const validAnswers = ["y", "yes", "n", "no"];
-      const answer = await askQuestion("Shall we? [y/n] ", validAnswers);
+      const confirm = await askConfirmation();
 
-      if (answer === "yes" || answer === "y") {
+      if (confirm) {
         console.log("Scanning...");
 
-        const fileCountByType = await renameAllFiles(testDirectoryPath);
+        const fileCountByType = await renameAllFiles(directory);
         const { raw, jpg, skipped } = fileCountByType;
 
         console.log(`Scanned ${raw + jpg + skipped} files in total.`);
@@ -58,9 +48,10 @@ const main = async (): Promise<void> => {
     process.exit(0);
   } catch (error) {
     console.error(
-      "Error occured when running the main segment of the application: ",
+      "Error occurred when running the main segment of the application:",
       error
     );
+    process.exit(1);
   }
 };
 
