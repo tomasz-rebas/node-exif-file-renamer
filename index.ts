@@ -1,9 +1,9 @@
+import { existsSync, lstatSync } from "fs";
 import { join } from "path";
 import { createInterface } from "readline";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
-
-const testDirectoryPath = join(__dirname, "test_directory_2");
+import inquirer from "inquirer";
 
 const askQuestion = (question: string, validAnswers: string[]) => {
   return new Promise((resolve) => {
@@ -26,9 +26,27 @@ const askQuestion = (question: string, validAnswers: string[]) => {
   });
 };
 
+const chooseDirectory = async (): Promise<string> => {
+  const { directory } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "directory",
+      message: "Enter the directory path:",
+      validate: (input) => {
+        return existsSync(input) && lstatSync(input).isDirectory()
+          ? true
+          : "Please enter a valid directory path.";
+      },
+    },
+  ]);
+
+  return directory;
+};
+
 const main = async (): Promise<void> => {
   try {
-    const fileCount = await getFileCount(testDirectoryPath);
+    const directory = await chooseDirectory();
+    const fileCount = await getFileCount(directory);
 
     if (fileCount > 0) {
       console.log(
@@ -41,7 +59,7 @@ const main = async (): Promise<void> => {
       if (answer === "yes" || answer === "y") {
         console.log("Scanning...");
 
-        const fileCountByType = await renameAllFiles(testDirectoryPath);
+        const fileCountByType = await renameAllFiles(directory);
         const { raw, jpg, skipped } = fileCountByType;
 
         console.log(`Scanned ${raw + jpg + skipped} files in total.`);
