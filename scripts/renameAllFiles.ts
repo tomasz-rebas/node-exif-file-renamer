@@ -67,7 +67,7 @@ export const renameAllFiles = async (
           break;
       }
 
-      bar.update(bar.getProgress() * fileCount + 1, {
+      bar.update(Math.round(bar.getProgress() * fileCount) + 1, {
         filename: entries[i].name,
       });
     }
