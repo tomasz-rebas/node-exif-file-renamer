@@ -14,7 +14,7 @@ const chooseDirectory = async (): Promise<string> =>
   });
 
 const askConfirmation = async (): Promise<boolean> =>
-  await confirm({ message: "Shall we?", default: false });
+  await confirm({ message: "Shall we?" });
 
 const main = async (): Promise<void> => {
   try {
