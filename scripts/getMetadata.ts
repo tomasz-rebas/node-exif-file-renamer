@@ -61,9 +61,9 @@ export const getMetadata = async (
     };
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Error while extracting metadata.", error.message);
+      console.error("\nError while extracting metadata.", error.message);
     } else {
-      console.error("An unknown error occurred.");
+      console.error("\nAn unknown error occurred.");
     }
   }
 };

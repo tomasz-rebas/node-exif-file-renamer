@@ -15,7 +15,7 @@ const renameFile = async (oldPath: string, newPath: string): Promise<void> => {
     await rename(oldPath, newPath);
     console.log(`Renamed ${basename(oldPath)} to ${basename(newPath)}`);
   } catch (error) {
-    console.error(`Error occurred when renaming the file ${oldPath}.`, error);
+    console.error(`\nError occurred when renaming the file ${oldPath}.`, error);
   }
 };
 
