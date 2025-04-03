@@ -26,8 +26,14 @@ export const renameAllFiles = async (
   if (!bar) {
     isRootCall = true;
     fileCount = await getFileCount(directory);
-    bar = new SingleBar({}, Presets.shades_classic);
-    bar.start(fileCount, 0);
+    bar = new SingleBar(
+      {
+        format: "[{bar}] {percentage}% | {value}/{total} | {filename}",
+        hideCursor: true,
+      },
+      Presets.shades_classic
+    );
+    bar.start(fileCount, 0, { filename: "Starting..." });
   }
 
   for (let i = 0; i < entries.length; i++) {
@@ -61,7 +67,9 @@ export const renameAllFiles = async (
           break;
       }
 
-      bar.update(bar.getProgress() * fileCount + 1);
+      bar.update(bar.getProgress() * fileCount + 1, {
+        filename: entries[i].name,
+      });
     }
   }
 
