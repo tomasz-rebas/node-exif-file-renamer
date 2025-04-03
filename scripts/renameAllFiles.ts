@@ -2,8 +2,7 @@ import { join } from "path";
 import { readdir } from "fs/promises";
 import { processFile } from "./processFile";
 import { getFileCount } from "./getFileCount";
-
-const cliProgress = require("cli-progress");
+import { SingleBar, Presets } from "cli-progress";
 
 interface FileCountByType {
   raw: number;
@@ -14,7 +13,7 @@ interface FileCountByType {
 export const renameAllFiles = async (
   directory: string,
   fileCount: number,
-  bar?: any
+  bar?: SingleBar
 ): Promise<FileCountByType> => {
   const entries = await readdir(directory, { withFileTypes: true });
 
@@ -27,7 +26,7 @@ export const renameAllFiles = async (
   if (!bar) {
     isRootCall = true;
     fileCount = await getFileCount(directory);
-    bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    bar = new SingleBar({}, Presets.shades_classic);
     bar.start(fileCount, 0);
   }
 
