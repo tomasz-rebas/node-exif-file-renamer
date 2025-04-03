@@ -14,7 +14,7 @@ const chooseDirectory = async (): Promise<string> =>
   });
 
 const askConfirmation = async (): Promise<boolean> =>
-  await confirm({ message: "Shall we?", default: false });
+  await confirm({ message: "Shall we?" });
 
 const main = async (): Promise<void> => {
   try {
@@ -31,7 +31,7 @@ const main = async (): Promise<void> => {
       if (confirm) {
         console.log("Scanning...");
 
-        const fileCountByType = await renameAllFiles(directory);
+        const fileCountByType = await renameAllFiles(directory, fileCount);
         const { raw, jpg, skipped } = fileCountByType;
 
         console.log(`Scanned ${raw + jpg + skipped} files in total.`);
@@ -41,7 +41,7 @@ const main = async (): Promise<void> => {
       }
     } else {
       console.log(
-        "There's no files in the given directory. Exiting the program."
+        "There are no files in the given directory. Exiting the program."
       );
     }
 

@@ -1,6 +1,8 @@
 import { join } from "path";
 import { readdir } from "fs/promises";
 import { processFile } from "./processFile";
+import { getFileCount } from "./getFileCount";
+import { SingleBar, Presets } from "cli-progress";
 
 interface FileCountByType {
   raw: number;
@@ -9,7 +11,9 @@ interface FileCountByType {
 }
 
 export const renameAllFiles = async (
-  directory: string
+  directory: string,
+  fileCount: number,
+  bar?: SingleBar
 ): Promise<FileCountByType> => {
   const entries = await readdir(directory, { withFileTypes: true });
 
@@ -17,10 +21,29 @@ export const renameAllFiles = async (
   let jpgFilesRenamed = 0;
   let filesSkipped = 0;
 
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      const entryPath = join(directory, entry.name);
-      const { raw, jpg, skipped } = await renameAllFiles(entryPath);
+  // Initialize progress bar only on the first function call
+  let isRootCall = false;
+  if (!bar) {
+    isRootCall = true;
+    fileCount = await getFileCount(directory);
+    bar = new SingleBar(
+      {
+        format: "[{bar}] {percentage}% | {value}/{total} | {filename}",
+        hideCursor: true,
+      },
+      Presets.shades_classic
+    );
+    bar.start(fileCount, 0, { filename: "Starting..." });
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    if (entries[i].isDirectory()) {
+      const entryPath = join(directory, entries[i].name);
+      const { raw, jpg, skipped } = await renameAllFiles(
+        entryPath,
+        fileCount,
+        bar
+      );
 
       rawFilesRenamed += raw;
       jpgFilesRenamed += jpg;
@@ -29,8 +52,8 @@ export const renameAllFiles = async (
       continue;
     }
 
-    if (entry.isFile()) {
-      const processedFile = await processFile(entry);
+    if (entries[i].isFile()) {
+      const processedFile = await processFile(entries[i]);
 
       switch (processedFile) {
         case "RAW":
@@ -43,7 +66,15 @@ export const renameAllFiles = async (
           filesSkipped++;
           break;
       }
+
+      bar.update(Math.round(bar.getProgress() * fileCount) + 1, {
+        filename: entries[i].name,
+      });
     }
+  }
+
+  if (isRootCall) {
+    bar.stop();
   }
 
   return {
