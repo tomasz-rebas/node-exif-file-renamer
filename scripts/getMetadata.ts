@@ -1,4 +1,5 @@
 import { EXIFTags, exiftool } from "exiftool-vendored";
+import { logToFile } from "./logToFile";
 
 interface DateTime {
   year: number;
@@ -60,10 +61,6 @@ export const getMetadata = async (
       iso: metadata.ISO,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("\nError while extracting metadata.", error.message);
-    } else {
-      console.error("\nAn unknown error occurred.");
-    }
+    logToFile("Error while extracting metadata", { error });
   }
 };

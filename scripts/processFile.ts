@@ -3,6 +3,7 @@ import { rename } from "fs/promises";
 import { getMetadata } from "./getMetadata";
 import { getNewFilename } from "./getNewFilename";
 import { Dirent } from "fs";
+import { logToFile } from "./logToFile";
 
 const isJpg = (fileName: string): boolean =>
   extname(fileName).toLowerCase() === ".jpg";
@@ -13,9 +14,11 @@ const isRaw = (fileName: string): boolean =>
 const renameFile = async (oldPath: string, newPath: string): Promise<void> => {
   try {
     await rename(oldPath, newPath);
-    console.log(`\nRenamed ${basename(oldPath)} to ${basename(newPath)}`);
+    logToFile(`Renamed ${basename(oldPath)} to ${basename(newPath)}`, {});
   } catch (error) {
-    console.error(`\nError occurred when renaming the file ${oldPath}.`, error);
+    logToFile(`Error occurred when renaming the file ${oldPath}`, {
+      error,
+    });
   }
 };
 
@@ -34,7 +37,7 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
   const metadata = await getMetadata(path);
 
   if (metadata === undefined) {
-    console.error(`Couldn't retrieve metadata for ${name}`);
+    logToFile(`Couldn't retrieve metadata for ${name}`, {});
 
     return "SKIPPED";
   }
@@ -46,6 +49,8 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
   }
 
   if (name === newFilename) {
+    logToFile(`Skipping ${name} since it's already renamed`, {});
+
     return "SKIPPED";
   }
 
