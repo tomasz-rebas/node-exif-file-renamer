@@ -2,8 +2,7 @@ import { existsSync, lstatSync } from "fs";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
 import { input, confirm } from "@inquirer/prompts";
-import { logToFile } from "./scripts/logToFile";
-import { setChosenPath } from "./scripts/globals";
+import { logToFile, setChosenPath } from "./scripts/logToFile";
 
 const chooseDirectory = async (): Promise<string> =>
   await input({

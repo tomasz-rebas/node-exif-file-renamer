@@ -1,6 +1,13 @@
 import { join } from "path";
 import { appendFileSync } from "fs";
-import { getChosenPath } from "./globals";
+
+let CHOSEN_PATH: string = process.cwd();
+
+const getChosenPath = () => CHOSEN_PATH;
+
+export const setChosenPath = (newPath: string) => {
+  CHOSEN_PATH = newPath;
+};
 
 const getLogFilename = (): string => {
   const now = new Date();
