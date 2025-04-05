@@ -3,6 +3,7 @@ import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
 import { input, confirm } from "@inquirer/prompts";
 import { logToFile } from "./scripts/logToFile";
+import { setChosenPath } from "./scripts/globals";
 
 const chooseDirectory = async (): Promise<string> =>
   await input({
@@ -20,6 +21,8 @@ const askConfirmation = async (): Promise<boolean> =>
 const main = async (): Promise<void> => {
   try {
     const directory = await chooseDirectory();
+    setChosenPath(directory);
+
     const fileCount = await getFileCount(directory);
 
     if (fileCount > 0) {

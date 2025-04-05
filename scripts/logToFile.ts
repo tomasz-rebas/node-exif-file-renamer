@@ -1,7 +1,6 @@
 import { join } from "path";
 import { appendFileSync } from "fs";
-
-const logFilePath = join(process.cwd(), "change.log");
+import { getChosenPath } from "./globals";
 
 export const logToFile = (
   message: string,
@@ -11,6 +10,7 @@ export const logToFile = (
   const errorMessage =
     error && error instanceof Error ? `: ${error.message}` : "";
 
+  const logFilePath = join(getChosenPath(), "change.log");
   appendFileSync(logFilePath, `${timestamp} - ${message}${errorMessage}\n`);
 
   if (logToConsole && error) {
