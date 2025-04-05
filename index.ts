@@ -2,6 +2,7 @@ import { existsSync, lstatSync } from "fs";
 import { renameAllFiles } from "./scripts/renameAllFiles";
 import { getFileCount } from "./scripts/getFileCount";
 import { input, confirm } from "@inquirer/prompts";
+import { logToFile, setChosenPath } from "./scripts/logToFile";
 
 const chooseDirectory = async (): Promise<string> =>
   await input({
@@ -19,6 +20,8 @@ const askConfirmation = async (): Promise<boolean> =>
 const main = async (): Promise<void> => {
   try {
     const directory = await chooseDirectory();
+    setChosenPath(directory);
+
     const fileCount = await getFileCount(directory);
 
     if (fileCount > 0) {
@@ -29,27 +32,34 @@ const main = async (): Promise<void> => {
       const confirm = await askConfirmation();
 
       if (confirm) {
-        console.log("Scanning...");
+        logToFile(
+          `Renaming all the JPG and Nikon RAW files in ${directory}`,
+          {}
+        );
+        logToFile("Scanning...", { logToConsole: true });
 
         const fileCountByType = await renameAllFiles(directory, fileCount);
         const { raw, jpg, skipped } = fileCountByType;
 
-        console.log(`Scanned ${raw + jpg + skipped} files in total.`);
-        console.log("RAW files renamed: ", raw);
-        console.log("JPG files renamed: ", jpg);
-        console.log("Files skipped: ", skipped);
+        logToFile(`Scanned ${raw + jpg + skipped} files in total.`, {
+          logToConsole: true,
+        });
+        logToFile(`RAW files renamed: ${raw}`, { logToConsole: true });
+        logToFile(`JPG files renamed: ${jpg}`, { logToConsole: true });
+        logToFile(`Files skipped: ${skipped}`, { logToConsole: true });
       }
     } else {
-      console.log(
-        "There are no files in the given directory. Exiting the program."
+      logToFile(
+        "There are no files in the given directory. Exiting the program.",
+        { logToConsole: true }
       );
     }
 
     process.exit(0);
   } catch (error) {
-    console.error(
+    logToFile(
       "Error occurred when running the main segment of the application:",
-      error
+      { error, logToConsole: true }
     );
     process.exit(1);
   }

@@ -1,4 +1,5 @@
 import { Metadata } from "./getMetadata";
+import { logToFile } from "./logToFile";
 
 // Ensure the number is always 2-digit e.g. 02 instead of 2
 const padded = (time: number) => time.toString().padStart(2, "0");
@@ -22,11 +23,7 @@ export const getNewFilename = (
 
     return segments.join("_") + extension;
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error occured when building new filename.", error.message);
-    } else {
-      console.error("An unknown error occurred.");
-    }
+    logToFile("Error occured when building new filename", { error });
 
     return null;
   }

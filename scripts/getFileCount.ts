@@ -1,5 +1,6 @@
 import { join } from "path";
 import { readdir } from "fs/promises";
+import { logToFile } from "./logToFile";
 
 export const getFileCount = async (directory: string): Promise<number> => {
   let fileCount = 0;
@@ -16,7 +17,10 @@ export const getFileCount = async (directory: string): Promise<number> => {
       }
     }
   } catch (error) {
-    console.error("Error occured when trying to count files:", error);
+    logToFile("Error occured when trying to count files", {
+      error,
+      logToConsole: true,
+    });
     process.exit(0);
   }
 
