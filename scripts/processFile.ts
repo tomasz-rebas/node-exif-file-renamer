@@ -42,7 +42,7 @@ export const processFile = async (entry: Dirent): Promise<ProcessedFile> => {
     return "SKIPPED";
   }
 
-  const newFilename = getNewFilename(metadata, extname(path));
+  const newFilename = getNewFilename(metadata, extname(path).toLowerCase());
 
   if (!newFilename) {
     return "SKIPPED";
