@@ -111,8 +111,8 @@ describe("getFileCount", () => {
     expect(result).toBe(0);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error occured when trying to count files:",
-      expect.any(Error)
+      "Error occured when trying to count files",
+      "Unable to read directory"
     );
 
     expect(processExitSpy).toHaveBeenCalledWith(0);
