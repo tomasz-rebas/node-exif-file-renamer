@@ -13,3 +13,7 @@ Example:
 `180515_16025102_70mm_1-360s_f7.1_ISO-1600`
 
 The script looks for and renames both JPG and Nikon RAW (.nef) files.
+
+You can pass additional `t` parameter if you wish for shorter yet still unique filenames:
+
+`180515_16025102`

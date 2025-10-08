@@ -21,6 +21,15 @@ export const getNewFilename = (
       `ISO-${iso}`,
     ];
 
+    // Check for the argument 't'.
+    // If present → new name will not include the gear settings.
+    const args = process.argv.slice(2);
+    const arg = args[0];
+
+    if (arg === "t") {
+      return `${segments[0]}_${segments[1]}${extension}`;
+    }
+
     return segments.join("_") + extension;
   } catch (error) {
     logToFile("Error occured when building new filename", { error });
